@@ -30,7 +30,8 @@ export default function Home() {
                 Cocoon
             </motion.h1>
 
-            <div style={{ display: 'flex', gap: '2rem' }}>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center', maxWidth: '800px' }}>
                 <Link href="/v1">
                     <motion.div
                         whileHover={{ scale: 1.05 }}
@@ -66,6 +67,25 @@ export default function Home() {
                     >
                         <h2 style={{ marginBottom: '0.5rem' }}>Version 2</h2>
                         <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>Interactive 3D</p>
+                    </motion.div>
+                </Link>
+
+                <Link href="/v4">
+                    <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            padding: '2rem',
+                            border: '1px solid rgba(255, 235, 59, 0.3)',
+                            borderRadius: '16px',
+                            background: 'rgba(255, 235, 59, 0.05)',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            width: '200px'
+                        }}
+                    >
+                        <h2 style={{ marginBottom: '0.5rem' }}>Version 4</h2>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>Opening Cocoon</p>
                     </motion.div>
                 </Link>
             </div>

@@ -126,13 +126,10 @@ export default function SceneV2() {
         const angle = (i / members.length) * Math.PI * 2
         const radius = 4
 
-        // Assign GLB models to first two members
-        let modelPath = null
-        if (i === 0) {
-            modelPath = '/models/man_head.glb'
-        } else if (i === 1) {
-            modelPath = '/models/stylized_head_decimated_sculpt.glb'
-        }
+        // Assign GLB models to ALL members, alternating between the two optimized models
+        const modelPath = i % 2 === 0
+            ? '/models/stylized_head_optimized.glb'
+            : '/models/man_head_optimized.glb'
 
         return {
             ...member,

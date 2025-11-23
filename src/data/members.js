@@ -3,72 +3,72 @@ import { v4 as uuidv4 } from 'uuid';
 export const members = [
     {
         id: uuidv4(),
-        name: "Elara Vance",
+        name: "Sigríður Birna",
         role: "Sound Healer",
-        description: "Weaving frequencies to mend the soul. Elara uses crystal bowls and vocal toning to create immersive soundscapes that promote deep relaxation and healing.",
+        description: "Weaving frequencies from Icelandic nature. Sigríður uses ancient Nordic instruments and crystal bowls to create healing soundscapes inspired by volcanic rumbles and northern lights.",
         color: "#a8e6cf"
     },
     {
         id: uuidv4(),
-        name: "Kaelen Thorne",
+        name: "Þórður Máni",
         role: "Digital Sculptor",
-        description: "Crafting realities from the void. Kaelen specializes in procedural geometry and VR environments, exploring the intersection of code and organic form.",
+        description: "Merging Viking heritage with virtual reality. Þórður creates immersive 3D worlds that blend ancient Icelandic sagas with cutting-edge procedural art.",
         color: "#dcedc1"
     },
     {
         id: uuidv4(),
-        name: "Sia Raine",
+        name: "Ásta Rós",
         role: "Abstract Painter",
-        description: "Capturing emotion in pigment. Sia's large-scale canvases use mixed media to explore the chaotic beauty of the human experience.",
+        description: "Capturing the raw power of Icelandic landscapes. Ásta's large-scale works use volcanic ash and glacial pigments to express the untamed beauty of the North.",
         color: "#ffd3b6"
     },
     {
         id: uuidv4(),
-        name: "Jaxson Vane",
+        name: "Gunnar Hlíf",
         role: "Experimental DJ",
-        description: "Rhythms of the underground. Jaxson blends field recordings with industrial beats to create hypnotic, dance-inducing sets.",
+        description: "Beats born from basalt formations. Gunnar fuses field recordings from Iceland's lava fields with electronic rhythms to create otherworldly dance experiences.",
         color: "#ffaaa5"
     },
     {
         id: uuidv4(),
-        name: "Mira Sol",
+        name: "Elín Sól",
         role: "Holistic Masseuse",
-        description: "Restoring flow through touch. Mira combines traditional massage techniques with energy work to release physical and emotional blockages.",
+        description: "Harnessing geothermal energy for healing. Elín combines traditional massage with energy work, channeling the warmth of Iceland's hot springs into her practice.",
         color: "#ff8b94"
     },
     {
         id: uuidv4(),
-        name: "Orion Pax",
+        name: "Bjarki Frost",
         role: "Avant-Garde Tailor",
-        description: "Fashioning the future. Orion creates wearable art using sustainable materials and unconventional silhouettes.",
+        description: "Fashion forged in fire and ice. Bjarki's designs use sustainable Icelandic wool and volcanic-dyed fabrics to create wearable art that defies seasons.",
         color: "#a8e6cf"
     },
     {
         id: uuidv4(),
-        name: "Lyra Moon",
+        name: "Katrín Dögg",
         role: "Visual Poet",
-        description: "Words as visual texture. Lyra projects kinetic typography onto architectural surfaces, turning buildings into books.",
+        description: "Words flowing like northern light. Katrín projects kinetic Icelandic poetry onto glaciers and geysers, turning nature itself into living manuscripts.",
         color: "#dcedc1"
     },
     {
         id: uuidv4(),
-        name: "Caden Frost",
+        name: "Ísak Norður",
         role: "Installation Artist",
-        description: "Immersive spatial narratives. Caden transforms empty rooms into sensory experiences using light, mirrors, and fog.",
+        description: "Sculpting with steam and stone. Ísak transforms spaces using volcanic rock, moss, and mist to create immersive experiences of Iceland's raw elements.",
         color: "#ffd3b6"
     },
     {
         id: uuidv4(),
-        name: "Nia Zephyr",
+        name: "Hildur Ský",
         role: "Performance Artist",
-        description: "The body as a medium. Nia's endurance-based performances challenge the limits of physical expression and presence.",
+        description: "Dancing with the elements. Hildur's endurance performances in Iceland's harsh landscapes explore the relationship between human resilience and nature's fury.",
         color: "#ffaaa5"
     },
     {
         id: uuidv4(),
-        name: "Rian Cole",
+        name: "Ragnar Eldjárn",
         role: "Generative Musician",
-        description: "Music that writes itself. Rian builds algorithms that compose endless, evolving ambient soundtracks for spaces.",
+        description: "Algorithms inspired by aurora borealis. Ragnar builds systems that compose endless ambient soundscapes using data from Iceland's magnetic field fluctuations.",
         color: "#ff8b94"
     }
 ];

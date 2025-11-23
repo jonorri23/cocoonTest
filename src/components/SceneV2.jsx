@@ -45,11 +45,10 @@ function OrganicElement({ position, color, type, onClick, modelPath }) {
                     onClick={onClick}
                 >
                     {gltf && gltf.scene ? (
-                        // Use GLB model if available
-                        // Normalize scale: stylized_head needs smaller scale, man_head needs larger
+                        // Use GLB model if available - uniform scale for all models
                         <primitive
                             object={gltf.scene.clone()}
-                            scale={modelPath.includes('stylized') ? 0.15 : 0.5}
+                            scale={0.5}
                         />
                     ) : (
                         // Fallback to geometric shapes
@@ -130,10 +129,15 @@ export default function SceneV2() {
         const angle = (i / members.length) * Math.PI * 2
         const radius = 4
 
-        // Assign GLB models to ALL members, alternating between the two optimized models
-        const modelPath = i % 2 === 0
-            ? '/models/stylized_head_optimized.glb'
-            : '/models/man_head_optimized.glb'
+        // Assign unique GLB model to each member
+        const modelPaths = [
+            '/models/Big T.glb',
+            '/models/Cool Pizza.glb',
+            '/models/Man-2.glb',
+            '/models/Man.glb',
+            '/models/Mowchok.glb'
+        ]
+        const modelPath = modelPaths[i]
 
         return {
             ...member,

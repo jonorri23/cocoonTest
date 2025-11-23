@@ -88,6 +88,25 @@ export default function Home() {
                         <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>Opening Cocoon</p>
                     </motion.div>
                 </Link>
+
+                <Link href="/house">
+                    <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            padding: '2rem',
+                            border: '1px solid rgba(176, 132, 204, 0.3)',
+                            borderRadius: '16px',
+                            background: 'rgba(176, 132, 204, 0.05)',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            width: '200px'
+                        }}
+                    >
+                        <h2 style={{ marginBottom: '0.5rem' }}>House Demo</h2>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>3D Sphere Viewer</p>
+                    </motion.div>
+                </Link>
             </div>
         </div>
     )

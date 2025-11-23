@@ -8,19 +8,20 @@ import Cocoon from './Cocoon'
 import Effects from './Effects'
 import { members } from '../data/members'
 
+// Preload all GLB models before scene renders
+useGLTF.preload('/models/Big T.glb')
+useGLTF.preload('/models/Cool Pizza.glb')
+useGLTF.preload('/models/Man-2.glb')
+useGLTF.preload('/models/Man.glb')
+useGLTF.preload('/models/Mowchok.glb')
+
+
 function OrganicElement({ position, color, type, onClick, modelPath }) {
     const mesh = useRef()
     const [hovered, setHover] = useState(false)
 
-    // Load GLB model if path is provided
-    let gltf = null
-    try {
-        if (modelPath) {
-            gltf = useGLTF(modelPath)
-        }
-    } catch (error) {
-        console.warn(`Failed to load model: ${modelPath}`, error)
-    }
+    // Load GLB model - will use preloaded cache
+    const gltf = modelPath ? useGLTF(modelPath) : null
 
     useFrame((state) => {
         const t = state.clock.getElapsedTime()
@@ -35,6 +36,10 @@ function OrganicElement({ position, color, type, onClick, modelPath }) {
         config: config.wobbly
     })
 
+    if (!gltf || !gltf.scene) {
+        return null // Don't render anything if model isn't loaded yet
+    }
+
     return (
         <animated.group position={position} scale={scale}>
             <Float speed={2} rotationIntensity={1} floatIntensity={1}>
@@ -44,28 +49,10 @@ function OrganicElement({ position, color, type, onClick, modelPath }) {
                     onPointerOut={() => setHover(false)}
                     onClick={onClick}
                 >
-                    {gltf && gltf.scene ? (
-                        // Use GLB model if available - uniform scale for all models
-                        <primitive
-                            object={gltf.scene.clone()}
-                            scale={0.5}
-                        />
-                    ) : (
-                        // Fallback to geometric shapes
-                        <mesh>
-                            {type === 'torus' && <torusKnotGeometry args={[0.3, 0.1, 64, 8]} />}
-                            {type === 'sphere' && <sphereGeometry args={[0.4, 32, 32]} />}
-                            {type === 'octahedron' && <octahedronGeometry args={[0.5]} />}
-                            <meshPhysicalMaterial
-                                color={color}
-                                roughness={0.1}
-                                metalness={0.8}
-                                clearcoat={1}
-                                transparent
-                                opacity={0.8}
-                            />
-                        </mesh>
-                    )}
+                    <primitive
+                        object={gltf.scene.clone()}
+                        scale={0.5}
+                    />
                 </group>
             </Float>
         </animated.group>

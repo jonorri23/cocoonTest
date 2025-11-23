@@ -46,7 +46,11 @@ function OrganicElement({ position, color, type, onClick, modelPath }) {
                 >
                     {gltf && gltf.scene ? (
                         // Use GLB model if available
-                        <primitive object={gltf.scene.clone()} scale={0.3} />
+                        // Normalize scale: stylized_head needs smaller scale, man_head needs larger
+                        <primitive
+                            object={gltf.scene.clone()}
+                            scale={modelPath.includes('stylized') ? 0.15 : 0.5}
+                        />
                     ) : (
                         // Fallback to geometric shapes
                         <mesh>

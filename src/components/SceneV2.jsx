@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera, Environment, Float, Stars, Sparkles, Text, Html } from '@react-three/drei'
+import { OrbitControls, PerspectiveCamera, Environment, Stars, Sparkles, Text, Html, useGLTF, Float } from '@react-three/drei'
 import { useSpring, animated, config } from '@react-spring/three'
 import { useDrag } from '@use-gesture/react'
 import * as THREE from 'three'
@@ -8,14 +8,26 @@ import Cocoon from './Cocoon'
 import Effects from './Effects'
 import { members } from '../data/members'
 
-function OrganicElement({ position, color, type, onClick }) {
+function OrganicElement({ position, color, type, onClick, modelPath }) {
     const mesh = useRef()
     const [hovered, setHover] = useState(false)
 
+    // Load GLB model if path is provided
+    let gltf = null
+    try {
+        if (modelPath) {
+            gltf = useGLTF(modelPath)
+        }
+    } catch (error) {
+        console.warn(`Failed to load model: ${modelPath}`, error)
+    }
+
     useFrame((state) => {
         const t = state.clock.getElapsedTime()
-        mesh.current.rotation.x = Math.sin(t * 0.5) * 0.5
-        mesh.current.rotation.y += 0.01
+        if (mesh.current) {
+            mesh.current.rotation.x = Math.sin(t * 0.5) * 0.5
+            mesh.current.rotation.y += 0.01
+        }
     })
 
     const { scale } = useSpring({
@@ -26,24 +38,32 @@ function OrganicElement({ position, color, type, onClick }) {
     return (
         <animated.group position={position} scale={scale}>
             <Float speed={2} rotationIntensity={1} floatIntensity={1}>
-                <mesh
+                <group
                     ref={mesh}
                     onPointerOver={() => setHover(true)}
                     onPointerOut={() => setHover(false)}
                     onClick={onClick}
                 >
-                    {type === 'torus' && <torusKnotGeometry args={[0.3, 0.1, 64, 8]} />}
-                    {type === 'sphere' && <sphereGeometry args={[0.4, 32, 32]} />}
-                    {type === 'octahedron' && <octahedronGeometry args={[0.5]} />}
-                    <meshPhysicalMaterial
-                        color={color}
-                        roughness={0.1}
-                        metalness={0.8}
-                        clearcoat={1}
-                        transparent
-                        opacity={0.8}
-                    />
-                </mesh>
+                    {gltf && gltf.scene ? (
+                        // Use GLB model if available
+                        <primitive object={gltf.scene.clone()} scale={0.3} />
+                    ) : (
+                        // Fallback to geometric shapes
+                        <mesh>
+                            {type === 'torus' && <torusKnotGeometry args={[0.3, 0.1, 64, 8]} />}
+                            {type === 'sphere' && <sphereGeometry args={[0.4, 32, 32]} />}
+                            {type === 'octahedron' && <octahedronGeometry args={[0.5]} />}
+                            <meshPhysicalMaterial
+                                color={color}
+                                roughness={0.1}
+                                metalness={0.8}
+                                clearcoat={1}
+                                transparent
+                                opacity={0.8}
+                            />
+                        </mesh>
+                    )}
+                </group>
             </Float>
         </animated.group>
     )
@@ -105,6 +125,15 @@ export default function SceneV2() {
     const elements = members.map((member, i) => {
         const angle = (i / members.length) * Math.PI * 2
         const radius = 4
+
+        // Assign GLB models to first two members
+        let modelPath = null
+        if (i === 0) {
+            modelPath = '/models/man_head.glb'
+        } else if (i === 1) {
+            modelPath = '/models/stylized_head_decimated_sculpt.glb'
+        }
+
         return {
             ...member,
             position: [
@@ -112,7 +141,8 @@ export default function SceneV2() {
                 (Math.random() - 0.5) * 4,
                 Math.sin(angle) * radius
             ],
-            type: ['torus', 'sphere', 'octahedron'][i % 3]
+            type: ['torus', 'sphere', 'octahedron'][i % 3],
+            modelPath
         }
     })
 
@@ -168,6 +198,7 @@ export default function SceneV2() {
                         position={el.position}
                         color={el.color}
                         type={el.type}
+                        modelPath={el.modelPath}
                         onClick={() => setSelectedMember(el)}
                     />
                     {/* Floating Label */}

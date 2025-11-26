@@ -1,4 +1,3 @@
-```javascript
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { MeshDistortMaterial, GradientTexture, OrbitControls, Environment, Float, Line, MeshWobbleMaterial } from '@react-three/drei';
@@ -49,12 +48,12 @@ function MyceliumNode({ position, color, orbitSpeed }) {
     useFrame((state) => {
         const t = state.clock.elapsedTime;
         angle.current += orbitSpeed;
-        
+
         const radius = 3;
         const x = Math.cos(angle.current) * radius;
         const z = Math.sin(angle.current) * radius;
         const y = Math.sin(t * 0.5 + angle.current) * 0.3;
-        
+
         if (mesh.current) {
             mesh.current.position.set(x, y, z);
         }
@@ -88,12 +87,12 @@ function SilkPod({ position, orbitSpeed }) {
     useFrame((state) => {
         const t = state.clock.elapsedTime;
         angle.current += orbitSpeed;
-        
+
         const radius = 3.5;
         const x = Math.cos(angle.current + Math.PI * 0.66) * radius;
         const z = Math.sin(angle.current + Math.PI * 0.66) * radius;
         const y = Math.sin(t * 0.7 + angle.current) * 0.5;
-        
+
         if (mesh.current) {
             mesh.current.position.set(x, y, z);
             mesh.current.rotation.x = Math.sin(t * 0.5) * 0.2;
@@ -133,12 +132,12 @@ function CrystalNode({ position, orbitSpeed }) {
     useFrame((state) => {
         const t = state.clock.elapsedTime;
         angle.current += orbitSpeed;
-        
+
         const radius = 2.8;
         const x = Math.cos(angle.current + Math.PI * 1.33) * radius;
         const z = Math.sin(angle.current + Math.PI * 1.33) * radius;
         const y = Math.sin(t * 0.6 + angle.current) * 0.4;
-        
+
         if (mesh.current) {
             mesh.current.position.set(x, y, z);
             mesh.current.rotation.x = t * 0.2;
@@ -168,11 +167,11 @@ function CrystalNode({ position, orbitSpeed }) {
 // Silk threads connecting objects
 function SilkThreads() {
     const threads = useRef([]);
-    
+
     useFrame((state) => {
         const t = state.clock.elapsedTime;
         const orbitSpeed = 0.01;
-        
+
         // Calculate positions for the 3 orbiters
         const positions = [
             {
@@ -191,7 +190,7 @@ function SilkThreads() {
                 z: Math.sin(t * orbitSpeed + Math.PI * 1.33) * 2.8
             }
         ];
-        
+
         threads.current = positions;
     });
 
@@ -200,7 +199,7 @@ function SilkThreads() {
             {/* Threads from cocoon to each orbiter */}
             {threads.current.map((pos, i) => (
                 <Line
-                    key={`cocoon - ${ i } `}
+                    key={`cocoon - ${i} `}
                     points={[[0, 0, 0], [pos.x, pos.y, pos.z]]}
                     color="#ffffff"
                     lineWidth={0.5}
@@ -211,7 +210,7 @@ function SilkThreads() {
                     gapSize={0.5}
                 />
             ))}
-            
+
             {/* Threads between orbiters */}
             {threads.current.length === 3 && (
                 <>
@@ -255,26 +254,25 @@ export default function SceneShowcase({ params }) {
     return (
         <>
             <OrbitControls enableZoom={true} enablePan={false} />
-            
+
             <ambientLight intensity={0.6} />
             <pointLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
             <pointLight position={[-10, 5, -5]} intensity={1.2} color="#b084cc" />
             <pointLight position={[0, -5, 5]} intensity={1} color="#64ffda" />
-            
+
             <color attach="background" args={['#0a0a0a']} />
 
             <InteractiveCocoon params={params} />
-            
+
             {/* Orbiting objects */}
             <MyceliumNode color="#b084cc" orbitSpeed={0.01} />
             <SilkPod orbitSpeed={0.01} />
             <CrystalNode orbitSpeed={0.01} />
-            
+
             {/* Silk thread connections */}
             <SilkThreads />
-            
+
             <Environment preset={params.environment} />
         </>
     );
 }
-```

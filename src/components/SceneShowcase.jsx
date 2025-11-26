@@ -8,8 +8,8 @@ function InteractiveCocoon({ params }) {
     useFrame((state) => {
         const t = state.clock.getElapsedTime();
         if (mesh.current) {
-            mesh.current.rotation.x = Math.sin(t / 4) * 0.2;
-            mesh.current.rotation.y = t * 0.1;
+            // Simple Y-axis rotation only
+            mesh.current.rotation.y = t * 0.3;
 
             const breathe = 1 + Math.sin(t * 1.5) * 0.02;
             mesh.current.scale.set(1 * breathe, 1.8 * breathe, 1 * breathe);

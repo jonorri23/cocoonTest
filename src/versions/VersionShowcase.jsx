@@ -42,9 +42,23 @@ function ControlPanel({ params, setParams }) {
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255,255,255,0.2)',
             maxHeight: '80vh',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            pointerEvents: 'auto'
         }}>
             <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px' }}>Cocoon Parameters</h3>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Base Color</span>
+                    <span>{params.color}</span>
+                </div>
+                <input
+                    type="color"
+                    value={params.color}
+                    onChange={(e) => setParams({ ...params, color: e.target.value })}
+                    style={{ width: '100%', height: '40px', cursor: 'pointer', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)' }}
+                />
+            </div>
 
             <div style={groupStyle}>
                 <div style={labelStyle}>
@@ -203,8 +217,8 @@ export default function VersionShowcase() {
 
     return (
         <>
-            <div className="canvas-container">
-                <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 50 }}>
+            <div className="canvas-container" style={{ pointerEvents: 'none' }}>
+                <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6], fov: 50 }}>
                     <Suspense fallback={null}>
                         <SceneShowcase params={params} />
                     </Suspense>

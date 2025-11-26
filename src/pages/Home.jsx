@@ -130,6 +130,26 @@ export default function Home() {
                     </motion.div>
                 </Link>
 
+                {/* TestingIntro */}
+                <Link href="/testing-intro">
+                    <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            padding: '2rem',
+                            border: '1px solid rgba(100, 255, 218, 0.3)',
+                            borderRadius: '16px',
+                            background: 'linear-gradient(135deg, rgba(100, 255, 218, 0.08), rgba(176, 132, 204, 0.08))',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            width: '200px'
+                        }}
+                    >
+                        <h2 style={{ marginBottom: '0.5rem', color: 'white' }}>Testing Intro</h2>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>Animation Test</p>
+                    </motion.div>
+                </Link>
+
                 <Link href="/showcase">
                     <motion.div
                         whileHover={{ scale: 1.05 }}

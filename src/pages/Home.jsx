@@ -159,7 +159,7 @@ export default function Home() {
                         }}
                     >
                         <h2 style={{ marginBottom: '0.5rem', background: 'linear-gradient(45deg, #ff69b4, #00ffff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Showcase</h2>
-                        <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>Material Gallery</p>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>Cocoon Maker</p>
                     </motion.div>
                 </Link>
 

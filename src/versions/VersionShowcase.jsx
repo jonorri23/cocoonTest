@@ -30,7 +30,7 @@ export default function VersionShowcase() {
                         zIndex: 100
                     }}
                 >
-                    Cocoon <span style={{ fontSize: '1rem', opacity: 0.5 }}>Showcase</span>
+                    Cocoon <span style={{ fontSize: '1rem', opacity: 0.5 }}>Maker</span>
                 </motion.h1>
 
                 <Link href="/">
@@ -68,7 +68,7 @@ export default function VersionShowcase() {
                     fontSize: '0.9rem',
                     pointerEvents: 'none'
                 }}>
-                    Drag to rotate • Scroll to zoom
+                    Adjust parameters on the left • Drag to rotate • Scroll to zoom
                 </div>
             </div>
         </>

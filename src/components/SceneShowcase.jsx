@@ -1,219 +1,258 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { MeshDistortMaterial, GradientTexture, OrbitControls, Float, Html } from '@react-three/drei';
+import { MeshDistortMaterial, GradientTexture, OrbitControls, Environment } from '@react-three/drei';
 
-function CocoonVariation({ position, label, materialProps, gradientColors, animationVariant }) {
+function InteractiveCocoon({ params }) {
     const mesh = useRef();
 
     useFrame((state) => {
         const t = state.clock.getElapsedTime();
         if (mesh.current) {
-            // Animation variants for subtle differences
-            switch (animationVariant) {
-                case 'slow':
-                    mesh.current.rotation.x = Math.sin(t / 6) * 0.15;
-                    mesh.current.rotation.y = t * 0.05;
-                    break;
-                case 'fast':
-                    mesh.current.rotation.x = Math.sin(t / 3) * 0.25;
-                    mesh.current.rotation.y = t * 0.15;
-                    break;
-                case 'wobble':
-                    mesh.current.rotation.x = Math.sin(t / 4) * 0.3;
-                    mesh.current.rotation.y = Math.cos(t / 3) * 0.2;
-                    break;
-                default:
-                    // Standard V7 animation
-                    mesh.current.rotation.x = Math.sin(t / 4) * 0.2;
-                    mesh.current.rotation.y = t * 0.1;
-            }
+            mesh.current.rotation.x = Math.sin(t / 4) * 0.2;
+            mesh.current.rotation.y = t * 0.1;
 
-            // Breathing scale
             const breathe = 1 + Math.sin(t * 1.5) * 0.02;
             mesh.current.scale.set(1 * breathe, 1.8 * breathe, 1 * breathe);
         }
     });
 
     return (
-        <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.3}>
-            <group position={position}>
-                <mesh ref={mesh}>
-                    <sphereGeometry args={[1, 64, 64]} />
-                    <MeshDistortMaterial
-                        {...materialProps}
-                    >
-                        <GradientTexture
-                            stops={[0, 0.4, 0.8, 1]}
-                            colors={gradientColors}
-                            size={1024}
-                        />
-                    </MeshDistortMaterial>
-                </mesh>
+        <mesh ref={mesh}>
+            <sphereGeometry args={[1, 64, 64]} />
+            <MeshDistortMaterial
+                color={params.color}
+                envMapIntensity={params.envMapIntensity}
+                clearcoat={params.clearcoat}
+                clearcoatRoughness={params.clearcoatRoughness}
+                metalness={params.metalness}
+                roughness={params.roughness}
+                distort={params.distort}
+                speed={params.speed}
+            >
+                <GradientTexture
+                    stops={[0, 0.4, 0.8, 1]}
+                    colors={params.gradientColors}
+                    size={1024}
+                />
+            </MeshDistortMaterial>
+        </mesh>
+    );
+}
 
-                <Html position={[0, -2.2, 0]} center distanceFactor={8}>
-                    <div style={{
-                        color: 'white',
-                        fontSize: '13px',
-                        fontFamily: 'var(--font-main)',
-                        textAlign: 'center',
-                        pointerEvents: 'none',
-                        opacity: 0.8,
-                        textShadow: '0 0 8px rgba(0,0,0,0.8)'
-                    }}>
-                        {label}
-                    </div>
-                </Html>
-            </group>
-        </Float>
+function ControlPanel({ params, setParams }) {
+    const sliderStyle = {
+        width: '100%',
+        marginBottom: '8px'
+    };
+
+    const labelStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        fontSize: '12px',
+        marginBottom: '4px',
+        color: '#aaa'
+    };
+
+    const groupStyle = {
+        marginBottom: '16px',
+        padding: '12px',
+        background: 'rgba(0,0,0,0.5)',
+        borderRadius: '8px',
+        border: '1px solid rgba(255,255,255,0.1)'
+    };
+
+    return (
+        <div style={{
+            position: 'absolute',
+            top: '80px',
+            left: '20px',
+            width: '280px',
+            color: 'white',
+            fontFamily: 'var(--font-main)',
+            fontSize: '13px',
+            zIndex: 100,
+            background: 'rgba(0,0,0,0.7)',
+            padding: '16px',
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+        }}>
+            <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px' }}>Cocoon Parameters</h3>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Distort</span>
+                    <span>{params.distort.toFixed(2)}</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={params.distort}
+                    onChange={(e) => setParams({ ...params, distort: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+            </div>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Animation Speed</span>
+                    <span>{params.speed.toFixed(1)}</span>
+                </div>
+                <input
+                    type="range"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value={params.speed}
+                    onChange={(e) => setParams({ ...params, speed: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+            </div>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Metalness</span>
+                    <span>{params.metalness.toFixed(2)}</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={params.metalness}
+                    onChange={(e) => setParams({ ...params, metalness: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+            </div>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Roughness</span>
+                    <span>{params.roughness.toFixed(2)}</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={params.roughness}
+                    onChange={(e) => setParams({ ...params, roughness: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+            </div>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Clearcoat</span>
+                    <span>{params.clearcoat.toFixed(2)}</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={params.clearcoat}
+                    onChange={(e) => setParams({ ...params, clearcoat: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+            </div>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Clearcoat Roughness</span>
+                    <span>{params.clearcoatRoughness.toFixed(2)}</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={params.clearcoatRoughness}
+                    onChange={(e) => setParams({ ...params, clearcoatRoughness: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+            </div>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Env Map Intensity</span>
+                    <span>{params.envMapIntensity.toFixed(2)}</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.01"
+                    value={params.envMapIntensity}
+                    onChange={(e) => setParams({ ...params, envMapIntensity: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+            </div>
+
+            <button
+                onClick={() => setParams({
+                    color: "#ffffff",
+                    envMapIntensity: 0.8,
+                    clearcoat: 1,
+                    clearcoatRoughness: 0.1,
+                    metalness: 0.2,
+                    roughness: 0.1,
+                    distort: 0.4,
+                    speed: 2,
+                    gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc']
+                })}
+                style={{
+                    width: '100%',
+                    padding: '10px',
+                    background: 'rgba(176, 132, 204, 0.3)',
+                    border: '1px solid rgba(176, 132, 204, 0.5)',
+                    borderRadius: '8px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    marginTop: '8px'
+                }}
+            >
+                Reset to V7 Default
+            </button>
+        </div>
     );
 }
 
 export default function SceneShowcase() {
-    const variations = [
-        {
-            label: "Original",
-            position: [-6, 2.5, 0],
-            materialProps: {
-                color: "#ffffff",
-                envMapIntensity: 0.8,
-                clearcoat: 1,
-                clearcoatRoughness: 0.1,
-                metalness: 0.2,
-                roughness: 0.1,
-                distort: 0.4,
-                speed: 2
-            },
-            gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc'],
-            animationVariant: 'standard'
-        },
-        {
-            label: "Golden Silk",
-            position: [-2, 2.5, 0],
-            materialProps: {
-                color: "#ffd700",
-                envMapIntensity: 0.9,
-                clearcoat: 1,
-                clearcoatRoughness: 0.05,
-                metalness: 0.4,
-                roughness: 0.05,
-                distort: 0.4,
-                speed: 2
-            },
-            gradientColors: ['#ff8c00', '#ffd700', '#fff8dc', '#ffd700'],
-            animationVariant: 'slow'
-        },
-        {
-            label: "Amber Glow",
-            position: [2, 2.5, 0],
-            materialProps: {
-                color: "#ffbf00",
-                envMapIntensity: 0.85,
-                clearcoat: 1,
-                clearcoatRoughness: 0.08,
-                metalness: 0.3,
-                roughness: 0.08,
-                distort: 0.35,
-                speed: 1.8
-            },
-            gradientColors: ['#ff6b35', '#ffbf00', '#fffacd', '#ffbf00'],
-            animationVariant: 'standard'
-        },
-        {
-            label: "Pearl White",
-            position: [6, 2.5, 0],
-            materialProps: {
-                color: "#ffffff",
-                envMapIntensity: 1.0,
-                clearcoat: 1,
-                clearcoatRoughness: 0.02,
-                metalness: 0.15,
-                roughness: 0.05,
-                distort: 0.38,
-                speed: 2.2
-            },
-            gradientColors: ['#e8d5f2', '#ffffff', '#f0f8ff', '#ffffff'],
-            animationVariant: 'fast'
-        },
-        {
-            label: "Rose Gold",
-            position: [-6, -2.5, 0],
-            materialProps: {
-                color: "#b76e79",
-                envMapIntensity: 0.9,
-                clearcoat: 1,
-                clearcoatRoughness: 0.06,
-                metalness: 0.35,
-                roughness: 0.06,
-                distort: 0.42,
-                speed: 1.9
-            },
-            gradientColors: ['#b76e79', '#ffd1dc', '#fff0f5', '#b76e79'],
-            animationVariant: 'wobble'
-        },
-        {
-            label: "Champagne",
-            position: [-2, -2.5, 0],
-            materialProps: {
-                color: "#f7e7ce",
-                envMapIntensity: 0.85,
-                clearcoat: 1,
-                clearcoatRoughness: 0.07,
-                metalness: 0.25,
-                roughness: 0.08,
-                distort: 0.4,
-                speed: 2.1
-            },
-            gradientColors: ['#d4af37', '#f7e7ce', '#fffaf0', '#f7e7ce'],
-            animationVariant: 'slow'
-        },
-        {
-            label: "Moonstone",
-            position: [2, -2.5, 0],
-            materialProps: {
-                color: "#e8f4f8",
-                envMapIntensity: 0.95,
-                clearcoat: 1,
-                clearcoatRoughness: 0.04,
-                metalness: 0.18,
-                roughness: 0.06,
-                distort: 0.37,
-                speed: 2.3
-            },
-            gradientColors: ['#9db4c0', '#e8f4f8', '#f0ffff', '#e8f4f8'],
-            animationVariant: 'fast'
-        },
-        {
-            label: "Honey Amber",
-            position: [6, -2.5, 0],
-            materialProps: {
-                color: "#ffcc80",
-                envMapIntensity: 0.88,
-                clearcoat: 1,
-                clearcoatRoughness: 0.09,
-                metalness: 0.28,
-                roughness: 0.09,
-                distort: 0.43,
-                speed: 1.7
-            },
-            gradientColors: ['#d97706', '#ffcc80', '#fff5e1', '#ffcc80'],
-            animationVariant: 'wobble'
-        }
-    ];
+    // V7 Default parameters
+    const [params, setParams] = useState({
+        color: "#ffffff",
+        envMapIntensity: 0.8,
+        clearcoat: 1,
+        clearcoatRoughness: 0.1,
+        metalness: 0.2,
+        roughness: 0.1,
+        distort: 0.4,
+        speed: 2,
+        gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc']
+    });
 
     return (
         <>
-            <OrbitControls enableZoom={true} enablePan={true} />
+            <ControlPanel params={params} setParams={setParams} />
+
+            <OrbitControls enableZoom={true} enablePan={false} />
 
             <ambientLight intensity={0.6} />
             <pointLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
-            <pointLight position={[-10, 5, -5]} intensity={1.2} color="#ffd700" />
-            <pointLight position={[0, -5, 5]} intensity={1} color="#b084cc" />
+            <pointLight position={[-10, 5, -5]} intensity={1.2} color="#b084cc" />
+            <pointLight position={[0, -5, 5]} intensity={1} color="#64ffda" />
 
             <color attach="background" args={['#0a0a0a']} />
 
-            {variations.map((v, i) => (
-                <CocoonVariation key={i} {...v} />
-            ))}
+            <InteractiveCocoon params={params} />
+
+            <Environment preset="city" />
         </>
     );
 }

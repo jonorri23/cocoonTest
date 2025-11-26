@@ -3,7 +3,7 @@ import { OrbitControls, PerspectiveCamera, Environment, Stars, Sparkles, useGLTF
 import { useFrame, useThree } from '@react-three/fiber';
 import { useSpring, animated, config } from '@react-spring/three';
 import * as THREE from 'three';
-import CocoonFlower from './CocoonFlower';
+import CinematicCocoon from './CinematicCocoon';
 import OrbitalObject from './OrbitalObject';
 import Effects from './Effects';
 import { moons } from '../data/orbitalData';
@@ -106,8 +106,6 @@ function OrbitRing({ radius, color, opacity = 0.1 }) {
 
 export default function SceneV7({ onNavigationChange }) {
     const [navigationPath, setNavigationPath] = useState([]);
-    const [cocoonMorphProgress, setCocoonMorphProgress] = useState(0);
-    const [isMorphing, setIsMorphing] = useState(false);
     const cocoonGroup = useRef();
 
     const currentLevel = navigationPath.length;
@@ -147,39 +145,6 @@ export default function SceneV7({ onNavigationChange }) {
         }
     };
 
-    const handleCocoonClick = (e) => {
-        e.stopPropagation();
-        if (isRoot) {
-            // Toggle bloom/unbloom
-            setIsMorphing(true);
-            const targetProgress = cocoonMorphProgress > 0.5 ? 0 : 1;
-
-            // Smooth morph animation
-            const startProgress = cocoonMorphProgress;
-            const startTime = performance.now();
-            const duration = 2000; // 2 seconds
-
-            const animate = (currentTime) => {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-
-                setCocoonMorphProgress(
-                    startProgress + (targetProgress - startProgress) * progress
-                );
-
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    setIsMorphing(false);
-                }
-            };
-
-            requestAnimationFrame(animate);
-        } else {
-            handleBack();
-        }
-    };
-
     const orbitRadius = currentLevel === 0 ? 6 : currentLevel === 1 ? 5 : 4;
     const orbitSpeed = 0.15;
 
@@ -205,15 +170,17 @@ export default function SceneV7({ onNavigationChange }) {
             <Stars radius={100} depth={50} count={7000} factor={4} saturation={0} fade speed={0.5} />
             <Sparkles count={300} scale={15} size={2} speed={0.2} opacity={0.4} color="#ffffff" />
 
-            {/* The Morphing Cocoon - Backdrop "Sun" effect */}
+            {/* The Cinematic Cocoon - Backdrop "Sun" effect */}
             <animated.group
                 ref={cocoonGroup}
                 position={cocoonPosition}
                 scale={cocoonScale}
             >
-                <CocoonFlower
-                    morphProgress={cocoonMorphProgress}
-                    onClick={handleCocoonClick}
+                <CinematicCocoon
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (!isRoot) handleBack();
+                    }}
                 />
             </animated.group>
 

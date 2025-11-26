@@ -108,7 +108,41 @@ export default function Home() {
                     </motion.div>
                 </Link>
 
-
+                {/* Version 8 - Central Orbit */}
+                <Link href="/v8">
+                    <motion.div
+                        className="version-card"
+                        whileHover={{ scale: 1.05, y: -5 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            padding: '2rem',
+                            border: '1px solid rgba(100, 255, 218, 0.4)',
+                            borderRadius: '16px',
+                            background: 'linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(176, 132, 204, 0.1))',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            width: '200px',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        <h2 style={{ marginBottom: '0.5rem', color: 'white' }}>Version 8</h2>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>Central Orbit</p>
+                        <div style={{
+                            position: 'absolute',
+                            top: '0.5rem',
+                            right: '0.5rem',
+                            background: 'rgba(100, 255, 218, 0.3)',
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '8px',
+                            fontSize: '0.7rem',
+                            color: '#64ffda',
+                            fontWeight: '600'
+                        }}>
+                            NEW
+                        </div>
+                    </motion.div>
+                </Link>
 
                 <Link href="/showcase">
                     <motion.div

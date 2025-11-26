@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
-import { OrbitControls, PerspectiveCamera, Environment, Stars, Sparkles, useGLTF, Float, Html } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, Stars, Sparkles, useGLTF, Float, Html, Line } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useSpring, animated, config } from '@react-spring/three';
 import * as THREE from 'three';
@@ -80,6 +80,30 @@ function MemberGLB({ data, index, onClick, orbitRadius, orbitSpeed, angleOffset,
     );
 }
 
+// Orbit Ring Component
+function OrbitRing({ radius, color, opacity = 0.1 }) {
+    const points = [];
+    const segments = 64;
+    for (let i = 0; i <= segments; i++) {
+        const angle = (i / segments) * Math.PI * 2;
+        points.push(new THREE.Vector3(
+            Math.cos(angle) * radius,
+            0,
+            Math.sin(angle) * radius
+        ));
+    }
+
+    return (
+        <Line
+            points={points}
+            color={color}
+            lineWidth={0.5}
+            opacity={opacity}
+            transparent
+        />
+    );
+}
+
 export default function SceneV7({ onNavigationChange }) {
     const [navigationPath, setNavigationPath] = useState([]);
     const cocoonGroup = useRef();
@@ -155,6 +179,13 @@ export default function SceneV7({ onNavigationChange }) {
                     }}
                 />
             </animated.group>
+
+            {/* Orbit Ring Visualization */}
+            <OrbitRing
+                radius={orbitRadius}
+                color={isRoot ? "#b084cc" : (currentFocus?.color || "#64ffda")}
+                opacity={0.12}
+            />
 
             {/* Current Focus Object (Moon Visibility) */}
             {!isRoot && (

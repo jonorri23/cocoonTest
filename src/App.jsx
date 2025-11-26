@@ -3,7 +3,6 @@ import Home from './pages/Home'
 import Version2 from './versions/Version2'
 import Version4 from './versions/Version4'
 import Version7 from './versions/Version7';
-import Version8 from './versions/Version8';
 import VersionShowcase from './versions/VersionShowcase';
 import VersionHouse from './versions/VersionHouse'
 import './index.css'
@@ -15,7 +14,6 @@ function App() {
       <Route path="/v2" component={Version2} />
       <Route path="/v4" component={Version4} />
       <Route path="/v7" component={Version7} />
-      <Route path="/v8" component={Version8} />
       <Route path="/showcase" component={VersionShowcase} />
       <Route path="/house" component={VersionHouse} />
 

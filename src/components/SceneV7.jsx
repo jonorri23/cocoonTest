@@ -83,34 +83,16 @@ function MemberGLB({ data, index, onClick, orbitRadius, orbitSpeed, angleOffset,
 export default function SceneV7({ onNavigationChange }) {
     const [navigationPath, setNavigationPath] = useState([]);
     const cocoonGroup = useRef();
-    const { camera } = useThree();
 
     const currentLevel = navigationPath.length;
     const isRoot = currentLevel === 0;
     const currentFocus = navigationPath[navigationPath.length - 1];
 
-    // Parent Tracking Logic
-    useFrame(() => {
-        if (!isRoot && cocoonGroup.current) {
-            // Calculate "Top Right" position relative to camera
-            // We want it fixed on screen, so we take camera position and add a local offset
-            // Local offset: Right (+x), Up (+y), Forward (-z)
-            const offset = new THREE.Vector3(8, 5, -15);
-            offset.applyQuaternion(camera.quaternion);
-
-            // Smoothly interpolate to new position
-            const targetPos = camera.position.clone().add(offset);
-            cocoonGroup.current.position.lerp(targetPos, 0.1);
-
-            // Make it look at the camera? Or just float there?
-            // cocoonGroup.current.lookAt(camera.position); // Optional
-        }
-    });
-
-    // Spring for Root state (Center) vs Zoomed state (Handled by useFrame, but we use spring for scale/transition)
-    const { cocoonScale } = useSpring({
-        cocoonScale: isRoot ? 1 : 2, // Smaller in background than before, to fit screen corner
-        config: config.gentle
+    // Backdrop positioning: Cocoon as a "sun" behind everything
+    const { cocoonPosition, cocoonScale } = useSpring({
+        cocoonPosition: isRoot ? [0, 0, 0] : [0, 0, -40], // Far behind when zoomed
+        cocoonScale: isRoot ? 1 : 12, // Much larger when in background (like a sun)
+        config: { mass: 1, tension: 120, friction: 14 }
     });
 
     // Get orbiting objects
@@ -160,11 +142,10 @@ export default function SceneV7({ onNavigationChange }) {
             <Stars radius={100} depth={50} count={7000} factor={4} saturation={0} fade speed={0.5} />
             <Sparkles count={300} scale={15} size={2} speed={0.2} opacity={0.4} color="#ffffff" />
 
-            {/* The Cinematic Cocoon */}
-            {/* If Root: Position 0,0,0. If Zoomed: Handled by useFrame */}
+            {/* The Cinematic Cocoon - Backdrop "Sun" effect */}
             <animated.group
                 ref={cocoonGroup}
-                position={isRoot ? [0, 0, 0] : [0, 0, 0]} // Initial pos, updated by frame
+                position={cocoonPosition}
                 scale={cocoonScale}
             >
                 <CinematicCocoon

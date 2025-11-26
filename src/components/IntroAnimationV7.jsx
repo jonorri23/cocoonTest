@@ -54,8 +54,8 @@ export default function IntroAnimationV7({ onComplete, onSkip }) {
                     left: '50%',
                     top: '50%',
                     transform: 'translate(-50%, -50%)',
-                    height: '100vh',
-                    width: '2px',
+                    width: '100vw',
+                    height: '2px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -64,8 +64,8 @@ export default function IntroAnimationV7({ onComplete, onSkip }) {
                     <motion.div
                         initial={{ height: '4px', width: '4px', borderRadius: '50%' }}
                         animate={{
-                            height: phase === 'dot' ? '4px' : '100vh',
-                            width: phase === 'dot' ? '4px' : '1px',
+                            width: phase === 'dot' ? '4px' : '100vw',
+                            height: phase === 'dot' ? '4px' : '1px',
                             borderRadius: phase === 'dot' ? '50%' : '0%'
                         }}
                         transition={{ duration: 1.5, ease: "easeInOut" }}
@@ -79,8 +79,8 @@ export default function IntroAnimationV7({ onComplete, onSkip }) {
                     <AnimatePresence>
                         {phase === 'text' && (
                             <motion.div
-                                initial={{ y: '50vh', opacity: 0 }}
-                                animate={{ y: '-50vh', opacity: [0, 1, 1, 0] }}
+                                initial={{ x: '50vw', opacity: 0 }}
+                                animate={{ x: '-50vw', opacity: [0, 1, 1, 0] }}
                                 transition={{ duration: 2.5, ease: "easeInOut" }}
                                 style={{
                                     position: 'absolute',
@@ -89,7 +89,6 @@ export default function IntroAnimationV7({ onComplete, onSkip }) {
                                     fontSize: '2rem',
                                     letterSpacing: '0.5rem',
                                     whiteSpace: 'nowrap',
-                                    transform: 'rotate(-90deg)', // Vertical text
                                     textShadow: '0 0 10px rgba(255,255,255,0.5)'
                                 }}
                             >

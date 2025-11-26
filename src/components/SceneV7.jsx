@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef } from 'react';
 import { OrbitControls, PerspectiveCamera, Environment, Stars, Sparkles, useGLTF, Float, Html } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useSpring, animated, config } from '@react-spring/three';
 import * as THREE from 'three';
 import CinematicCocoon from './CinematicCocoon';
@@ -39,8 +39,6 @@ function MemberGLB({ data, index, onClick, orbitRadius, orbitSpeed, angleOffset,
             const y = verticalOffset + Math.sin(t * 0.5 + angleOffset) * 0.5;
 
             group.current.position.set(x, y, z);
-
-            // Rotate model to face center (roughly) or just spin slowly
             group.current.rotation.y += 0.01;
         }
     });
@@ -62,8 +60,6 @@ function MemberGLB({ data, index, onClick, orbitRadius, orbitSpeed, angleOffset,
                     onPointerOut={() => setHover(false)}
                 >
                     <primitive object={gltf.scene.clone()} />
-
-                    {/* Label */}
                     <Html position={[0, -2, 0]} center distanceFactor={10}>
                         <div style={{
                             color: data.color,
@@ -86,16 +82,35 @@ function MemberGLB({ data, index, onClick, orbitRadius, orbitSpeed, angleOffset,
 
 export default function SceneV7({ onNavigationChange }) {
     const [navigationPath, setNavigationPath] = useState([]);
+    const cocoonGroup = useRef();
+    const { camera } = useThree();
 
     const currentLevel = navigationPath.length;
     const isRoot = currentLevel === 0;
     const currentFocus = navigationPath[navigationPath.length - 1];
 
-    // Animate Cocoon Position: Center at root, Background when zoomed
-    const { cocoonPosition, cocoonScale } = useSpring({
-        cocoonPosition: isRoot ? [0, 0, 0] : [15, 8, -20],
-        cocoonScale: isRoot ? 1 : 4, // Make it huge in the background
-        config: { mass: 1, tension: 120, friction: 14 } // Slower, cinematic transition
+    // Parent Tracking Logic
+    useFrame(() => {
+        if (!isRoot && cocoonGroup.current) {
+            // Calculate "Top Right" position relative to camera
+            // We want it fixed on screen, so we take camera position and add a local offset
+            // Local offset: Right (+x), Up (+y), Forward (-z)
+            const offset = new THREE.Vector3(8, 5, -15);
+            offset.applyQuaternion(camera.quaternion);
+
+            // Smoothly interpolate to new position
+            const targetPos = camera.position.clone().add(offset);
+            cocoonGroup.current.position.lerp(targetPos, 0.1);
+
+            // Make it look at the camera? Or just float there?
+            // cocoonGroup.current.lookAt(camera.position); // Optional
+        }
+    });
+
+    // Spring for Root state (Center) vs Zoomed state (Handled by useFrame, but we use spring for scale/transition)
+    const { cocoonScale } = useSpring({
+        cocoonScale: isRoot ? 1 : 2, // Smaller in background than before, to fit screen corner
+        config: config.gentle
     });
 
     // Get orbiting objects
@@ -120,7 +135,6 @@ export default function SceneV7({ onNavigationChange }) {
         if (onNavigationChange) onNavigationChange(navigationPath.slice(0, -1));
     };
 
-    // Orbit parameters
     const orbitRadius = currentLevel === 0 ? 6 : currentLevel === 1 ? 5 : 4;
     const orbitSpeed = 0.15;
 
@@ -138,18 +152,21 @@ export default function SceneV7({ onNavigationChange }) {
 
             <color attach="background" args={['#050505']} />
 
-            {/* Cinematic Lighting */}
             <ambientLight intensity={0.2} />
             <pointLight position={[10, 10, 10]} intensity={1.5} color="#b084cc" />
             <pointLight position={[-10, -10, -10]} intensity={0.8} color="#64ffda" />
             <pointLight position={[0, 10, 0]} intensity={0.5} color="white" />
 
-            {/* Background Elements */}
             <Stars radius={100} depth={50} count={7000} factor={4} saturation={0} fade speed={0.5} />
             <Sparkles count={300} scale={15} size={2} speed={0.2} opacity={0.4} color="#ffffff" />
 
-            {/* The Cinematic Cocoon (Always visible, moves to background) */}
-            <animated.group position={cocoonPosition} scale={cocoonScale}>
+            {/* The Cinematic Cocoon */}
+            {/* If Root: Position 0,0,0. If Zoomed: Handled by useFrame */}
+            <animated.group
+                ref={cocoonGroup}
+                position={isRoot ? [0, 0, 0] : [0, 0, 0]} // Initial pos, updated by frame
+                scale={cocoonScale}
+            >
                 <CinematicCocoon
                     onClick={(e) => {
                         e.stopPropagation();
@@ -158,12 +175,26 @@ export default function SceneV7({ onNavigationChange }) {
                 />
             </animated.group>
 
+            {/* Current Focus Object (Moon Visibility) */}
+            {!isRoot && (
+                <OrbitalObject
+                    data={currentFocus}
+                    position={[0, 0, 0]}
+                    orbitRadius={0} // Static at center
+                    orbitSpeed={0}
+                    angleOffset={0}
+                    verticalOffset={0}
+                    onClick={handleBack} // Clicking center goes back
+                    showLabel={false} // Hide label for center object to avoid clutter
+                    dotMode={false}
+                />
+            )}
+
             {/* Orbiting Objects */}
             {orbitingObjects.map((obj, index) => {
                 const angleOffset = (index / orbitingObjects.length) * Math.PI * 2;
                 const verticalOffset = (Math.sin(angleOffset * 3) * 1);
 
-                // Special case: Members Moon children (Level 1) use GLB models
                 if (currentLevel === 1 && currentFocus.id === 'members') {
                     return (
                         <MemberGLB
@@ -179,7 +210,6 @@ export default function SceneV7({ onNavigationChange }) {
                     );
                 }
 
-                // Default Orbital Object
                 return (
                     <OrbitalObject
                         key={obj.id}

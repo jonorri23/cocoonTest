@@ -1,6 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { MeshDistortMaterial, GradientTexture, OrbitControls, Environment, Float, Line, MeshWobbleMaterial } from '@react-three/drei';
+import { MeshDistortMaterial, GradientTexture, OrbitControls, Environment, Float, Line, MeshWobbleMaterial, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 
 function InteractiveCocoon({ params }) {
@@ -41,7 +41,7 @@ function InteractiveCocoon({ params }) {
 }
 
 // Mycelium node orbiter
-function MyceliumNode({ position, color, orbitSpeed }) {
+function MyceliumNode({ color, orbitSpeed }) {
     const mesh = useRef();
     const angle = useRef(Math.random() * Math.PI * 2);
 
@@ -80,7 +80,7 @@ function MyceliumNode({ position, color, orbitSpeed }) {
 }
 
 // Silk pod orbiter
-function SilkPod({ position, orbitSpeed }) {
+function SilkPod({ orbitSpeed }) {
     const mesh = useRef();
     const angle = useRef(Math.random() * Math.PI * 2);
 
@@ -125,7 +125,7 @@ function SilkPod({ position, orbitSpeed }) {
 }
 
 // Crystal formation orbiter
-function CrystalNode({ position, orbitSpeed }) {
+function CrystalNode({ orbitSpeed }) {
     const mesh = useRef();
     const angle = useRef(Math.random() * Math.PI * 2);
 
@@ -199,7 +199,7 @@ function SilkThreads() {
             {/* Threads from cocoon to each orbiter */}
             {threads.current.map((pos, i) => (
                 <Line
-                    key={`cocoon - ${i} `}
+                    key={`cocoon-${i}`}
                     points={[[0, 0, 0], [pos.x, pos.y, pos.z]]}
                     color="#ffffff"
                     lineWidth={0.5}
@@ -250,7 +250,141 @@ function SilkThreads() {
     );
 }
 
-export default function SceneShowcase({ params }) {
+// Ambient silk web environment
+function SilkWeb({ density = 1 }) {
+    const strands = useMemo(() => {
+        const count = Math.floor(50 * density);
+        return Array.from({ length: count }, (_, i) => {
+            const angle = (i / count) * Math.PI * 2;
+            const radius = 5 + Math.random() * 10;
+            const height = (Math.random() - 0.5) * 15;
+            const spiralTightness = 0.5 + Math.random() * 1.5;
+
+            // Create spiral strand
+            const points = [];
+            const segments = 20;
+            for (let j = 0; j <= segments; j++) {
+                const t = j / segments;
+                const spiralAngle = angle + t * Math.PI * 2 * spiralTightness;
+                const spiralRadius = radius * (1 - t * 0.3);
+
+                points.push(new THREE.Vector3(
+                    Math.cos(spiralAngle) * spiralRadius,
+                    height + (t - 0.5) * (Math.random() * 5),
+                    Math.sin(spiralAngle) * spiralRadius
+                ));
+            }
+
+            return {
+                id: i,
+                points,
+                color: ['#ffffff', '#b084cc', '#64ffda'][i % 3],
+                opacity: 0.05 + Math.random() * 0.1,
+                lineWidth: 0.1 + Math.random() * 0.3
+            };
+        });
+    }, [density]);
+
+    const radialStrands = useMemo(() => {
+        const count = Math.floor(30 * density);
+        return Array.from({ length: count }, (_, i) => {
+            const angle = (i / count) * Math.PI * 2;
+            const startRadius = 1.5;
+            const endRadius = 12 + Math.random() * 5;
+
+            const points = [
+                new THREE.Vector3(
+                    Math.cos(angle) * startRadius,
+                    (Math.random() - 0.5) * 2,
+                    Math.sin(angle) * startRadius
+                ),
+                new THREE.Vector3(
+                    Math.cos(angle) * endRadius,
+                    (Math.random() - 0.5) * 10,
+                    Math.sin(angle) * endRadius
+                )
+            ];
+
+            return {
+                id: `radial-${i}`,
+                points,
+                color: '#ffffff',
+                opacity: 0.03 + Math.random() * 0.07,
+                lineWidth: 0.1
+            };
+        });
+    }, [density]);
+
+    return (
+        <>
+            {/* Spiral web strands */}
+            {strands.map(strand => (
+                <Line
+                    key={strand.id}
+                    points={strand.points}
+                    color={strand.color}
+                    lineWidth={strand.lineWidth}
+                    opacity={strand.opacity}
+                    transparent
+                />
+            ))}
+
+            {/* Radial strands from cocoon */}
+            {radialStrands.map(strand => (
+                <Line
+                    key={strand.id}
+                    points={strand.points}
+                    color={strand.color}
+                    lineWidth={strand.lineWidth}
+                    opacity={strand.opacity}
+                    transparent
+                    dashed
+                    dashScale={30}
+                    gapSize={0.3}
+                />
+            ))}
+        </>
+    );
+}
+
+// Floating silk particles
+function SilkParticles({ density = 1 }) {
+    if (density === 0) return null;
+
+    const count = Math.floor(200 * density);
+    const scale = 8 + (density * 4);
+
+    return (
+        <>
+            <Sparkles
+                count={count}
+                scale={scale}
+                size={1.5}
+                speed={0.1}
+                opacity={0.2}
+                color="#ffffff"
+            />
+            <Sparkles
+                count={Math.floor(count * 0.5)}
+                scale={scale * 0.8}
+                size={2}
+                speed={0.15}
+                opacity={0.15}
+                color="#64ffda"
+            />
+            <Sparkles
+                count={Math.floor(count * 0.5)}
+                scale={scale * 0.9}
+                size={1.8}
+                speed={0.12}
+                opacity={0.15}
+                color="#b084cc"
+            />
+        </>
+    );
+}
+
+export default function SceneShowcase({ params, silkDensity = 1 }) {
     return (
         <>
             <OrbitControls enableZoom={true} enablePan={false} />
@@ -271,6 +405,10 @@ export default function SceneShowcase({ params }) {
 
             {/* Silk thread connections */}
             <SilkThreads />
+
+            {/* Ambient silk web environment */}
+            <SilkWeb density={silkDensity} />
+            <SilkParticles density={silkDensity} />
 
             <Environment preset={params.environment} />
         </>

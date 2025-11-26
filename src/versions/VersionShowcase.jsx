@@ -206,6 +206,25 @@ function ControlPanel({ params, setParams }) {
                 />
             </div>
 
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Silk Web Density</span>
+                    <span>{params.silkDensity.toFixed(1)}x</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value={params.silkDensity}
+                    onChange={(e) => setParams({ ...params, silkDensity: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+                <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '4px' }}>
+                    0 = Off, 1 = Normal, 2 = Dense
+                </div>
+            </div>
+
             <button
                 onClick={() => setParams({
                     color: "#ffffff",
@@ -216,7 +235,9 @@ function ControlPanel({ params, setParams }) {
                     roughness: 0.1,
                     distort: 0.4,
                     speed: 2,
-                    gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc']
+                    gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc'],
+                    environment: 'city',
+                    silkDensity: 1
                 })}
                 style={{
                     width: '100%',
@@ -247,7 +268,8 @@ export default function VersionShowcase() {
         distort: 0.4,
         speed: 2,
         gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc'],
-        environment: 'city'
+        environment: 'city',
+        silkDensity: 1
     });
 
     return (
@@ -255,7 +277,7 @@ export default function VersionShowcase() {
             <div className="canvas-container" style={{ pointerEvents: 'none' }}>
                 <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6], fov: 50 }}>
                     <Suspense fallback={null}>
-                        <SceneShowcase params={params} />
+                        <SceneShowcase params={params} silkDensity={params.silkDensity} />
                     </Suspense>
                 </Canvas>
             </div>

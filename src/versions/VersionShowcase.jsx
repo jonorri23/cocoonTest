@@ -214,14 +214,33 @@ function ControlPanel({ params, setParams }) {
                 <input
                     type="range"
                     min="0"
-                    max="2"
-                    step="0.1"
+                    max="10"
+                    step="0.5"
                     value={params.silkDensity}
                     onChange={(e) => setParams({ ...params, silkDensity: parseFloat(e.target.value) })}
                     style={sliderStyle}
                 />
                 <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '4px' }}>
-                    0 = Off, 1 = Normal, 2 = Dense
+                    0 = Off, 1-2 = Light, 5 = Medium, 10 = Ultra Dense
+                </div>
+            </div>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
+                    <span>Silk Animation</span>
+                    <span>{params.silkAnimation.toFixed(1)}x</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value={params.silkAnimation}
+                    onChange={(e) => setParams({ ...params, silkAnimation: parseFloat(e.target.value) })}
+                    style={sliderStyle}
+                />
+                <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '4px' }}>
+                    Controls wave intensity (0 = static, 2 = fluid)
                 </div>
             </div>
 
@@ -237,7 +256,8 @@ function ControlPanel({ params, setParams }) {
                     speed: 2,
                     gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc'],
                     environment: 'city',
-                    silkDensity: 1
+                    silkDensity: 1,
+                    silkAnimation: 1
                 })}
                 style={{
                     width: '100%',
@@ -269,7 +289,8 @@ export default function VersionShowcase() {
         speed: 2,
         gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc'],
         environment: 'city',
-        silkDensity: 1
+        silkDensity: 1,
+        silkAnimation: 1
     });
 
     return (
@@ -277,7 +298,7 @@ export default function VersionShowcase() {
             <div className="canvas-container" style={{ pointerEvents: 'none' }}>
                 <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6], fov: 50 }}>
                     <Suspense fallback={null}>
-                        <SceneShowcase params={params} silkDensity={params.silkDensity} />
+                        <SceneShowcase params={params} silkDensity={params.silkDensity} silkAnimation={params.silkAnimation} />
                     </Suspense>
                 </Canvas>
             </div>

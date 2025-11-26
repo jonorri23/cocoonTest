@@ -250,25 +250,29 @@ function SilkThreads() {
     );
 }
 
-// Ambient silk web environment
-function SilkWeb({ density = 1 }) {
+// Ambient silk web environment with animation
+function SilkWeb({ density = 1, animationIntensity = 1 }) {
+    const strandsRef = useRef([]);
+
     const strands = useMemo(() => {
-        const count = Math.floor(50 * density);
+        const count = Math.floor(100 * density); // Increased from 50 to 100
         return Array.from({ length: count }, (_, i) => {
             const angle = (i / count) * Math.PI * 2;
             const radius = 5 + Math.random() * 10;
             const height = (Math.random() - 0.5) * 15;
             const spiralTightness = 0.5 + Math.random() * 1.5;
+            const animSpeed = 0.2 + Math.random() * 0.3;
+            const waveAmplitude = 0.3 + Math.random() * 0.5;
 
             // Create spiral strand
-            const points = [];
+            const basePoints = [];
             const segments = 20;
             for (let j = 0; j <= segments; j++) {
                 const t = j / segments;
                 const spiralAngle = angle + t * Math.PI * 2 * spiralTightness;
                 const spiralRadius = radius * (1 - t * 0.3);
 
-                points.push(new THREE.Vector3(
+                basePoints.push(new THREE.Vector3(
                     Math.cos(spiralAngle) * spiralRadius,
                     height + (t - 0.5) * (Math.random() * 5),
                     Math.sin(spiralAngle) * spiralRadius
@@ -277,22 +281,26 @@ function SilkWeb({ density = 1 }) {
 
             return {
                 id: i,
-                points,
+                basePoints,
                 color: ['#ffffff', '#b084cc', '#64ffda'][i % 3],
                 opacity: 0.05 + Math.random() * 0.1,
-                lineWidth: 0.1 + Math.random() * 0.3
+                lineWidth: 0.1 + Math.random() * 0.3,
+                animSpeed,
+                waveAmplitude,
+                phaseOffset: Math.random() * Math.PI * 2
             };
         });
     }, [density]);
 
     const radialStrands = useMemo(() => {
-        const count = Math.floor(30 * density);
+        const count = Math.floor(60 * density); // Increased from 30 to 60
         return Array.from({ length: count }, (_, i) => {
             const angle = (i / count) * Math.PI * 2;
             const startRadius = 1.5;
             const endRadius = 12 + Math.random() * 5;
+            const animSpeed = 0.15 + Math.random() * 0.2;
 
-            const points = [
+            const basePoints = [
                 new THREE.Vector3(
                     Math.cos(angle) * startRadius,
                     (Math.random() - 0.5) * 2,
@@ -307,21 +315,44 @@ function SilkWeb({ density = 1 }) {
 
             return {
                 id: `radial-${i}`,
-                points,
+                basePoints,
                 color: '#ffffff',
                 opacity: 0.03 + Math.random() * 0.07,
-                lineWidth: 0.1
+                lineWidth: 0.1,
+                animSpeed,
+                phaseOffset: Math.random() * Math.PI * 2
             };
         });
     }, [density]);
 
+    // Animate strands
+    useFrame((state) => {
+        if (animationIntensity === 0) return;
+
+        const t = state.clock.elapsedTime;
+
+        // Animate spiral strands
+        strandsRef.current = strands.map(strand => {
+            const animatedPoints = strand.basePoints.map((point, i) => {
+                const wave = Math.sin(t * strand.animSpeed + strand.phaseOffset + i * 0.3) *
+                    strand.waveAmplitude * animationIntensity;
+                return new THREE.Vector3(
+                    point.x + wave,
+                    point.y,
+                    point.z + wave * 0.5
+                );
+            });
+            return { ...strand, points: animatedPoints };
+        });
+    });
+
     return (
         <>
             {/* Spiral web strands */}
-            {strands.map(strand => (
+            {(strandsRef.current.length > 0 ? strandsRef.current : strands).map((strand, idx) => (
                 <Line
                     key={strand.id}
-                    points={strand.points}
+                    points={strand.points || strand.basePoints}
                     color={strand.color}
                     lineWidth={strand.lineWidth}
                     opacity={strand.opacity}
@@ -333,7 +364,7 @@ function SilkWeb({ density = 1 }) {
             {radialStrands.map(strand => (
                 <Line
                     key={strand.id}
-                    points={strand.points}
+                    points={strand.basePoints}
                     color={strand.color}
                     lineWidth={strand.lineWidth}
                     opacity={strand.opacity}
@@ -351,7 +382,7 @@ function SilkWeb({ density = 1 }) {
 function SilkParticles({ density = 1 }) {
     if (density === 0) return null;
 
-    const count = Math.floor(200 * density);
+    const count = Math.floor(300 * density); // Increased from 200 to 300
     const scale = 8 + (density * 4);
 
     return (
@@ -384,7 +415,7 @@ function SilkParticles({ density = 1 }) {
     );
 }
 
-export default function SceneShowcase({ params, silkDensity = 1 }) {
+export default function SceneShowcase({ params, silkDensity = 1, silkAnimation = 1 }) {
     return (
         <>
             <OrbitControls enableZoom={true} enablePan={false} />
@@ -407,7 +438,7 @@ export default function SceneShowcase({ params, silkDensity = 1 }) {
             <SilkThreads />
 
             {/* Ambient silk web environment */}
-            <SilkWeb density={silkDensity} />
+            <SilkWeb density={silkDensity} animationIntensity={silkAnimation} />
             <SilkParticles density={silkDensity} />
 
             <Environment preset={params.environment} />

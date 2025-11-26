@@ -3,6 +3,9 @@ import Home from './pages/Home'
 import Version1 from './versions/Version1'
 import Version2 from './versions/Version2'
 import Version4 from './versions/Version4'
+import Version5 from './versions/Version5'
+import Version6 from './versions/Version6'
+import Version7 from './versions/Version7';
 import VersionHouse from './versions/VersionHouse'
 import './index.css'
 
@@ -13,6 +16,9 @@ function App() {
       <Route path="/v1" component={Version1} />
       <Route path="/v2" component={Version2} />
       <Route path="/v4" component={Version4} />
+      <Route path="/v5" component={Version5} />
+      <Route path="/v6" component={Version6} />
+      <Route path="/v7" component={Version7} />
       <Route path="/house" component={VersionHouse} />
 
       {/* Fallback */}

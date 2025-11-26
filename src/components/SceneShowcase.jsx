@@ -53,7 +53,7 @@ export default function SceneShowcase({ params }) {
 
             <InteractiveCocoon params={params} />
 
-            <Environment preset="city" />
+            <Environment preset={params.environment} />
         </>
     );
 }

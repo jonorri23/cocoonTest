@@ -49,6 +49,40 @@ function ControlPanel({ params, setParams }) {
 
             <div style={groupStyle}>
                 <div style={labelStyle}>
+                    <span>Environment</span>
+                </div>
+                <select
+                    value={params.environment}
+                    onChange={(e) => setParams({ ...params, environment: e.target.value })}
+                    style={{
+                        width: '100%',
+                        padding: '8px',
+                        borderRadius: '8px',
+                        background: 'rgba(255,255,255,0.1)',
+                        color: 'white',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        cursor: 'pointer',
+                        fontSize: '13px'
+                    }}
+                >
+                    <option value="city">City</option>
+                    <option value="sunset">Sunset</option>
+                    <option value="dawn">Dawn</option>
+                    <option value="night">Night</option>
+                    <option value="warehouse">Warehouse</option>
+                    <option value="forest">Forest</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="studio">Studio</option>
+                    <option value="park">Park</option>
+                    <option value="lobby">Lobby</option>
+                </select>
+                <div style={{ marginTop: '8px', fontSize: '11px', opacity: 0.6 }}>
+                    For custom HDR: place .hdr file in /public/hdri/
+                </div>
+            </div>
+
+            <div style={groupStyle}>
+                <div style={labelStyle}>
                     <span>Base Color</span>
                     <span>{params.color}</span>
                 </div>
@@ -212,7 +246,8 @@ export default function VersionShowcase() {
         roughness: 0.1,
         distort: 0.4,
         speed: 2,
-        gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc']
+        gradientColors: ['#b084cc', '#ffffff', '#64ffda', '#b084cc'],
+        environment: 'city'
     });
 
     return (

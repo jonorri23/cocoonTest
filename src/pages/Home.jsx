@@ -12,7 +12,8 @@ export default function Home() {
             alignItems: 'center',
             background: '#050505',
             color: '#e0e0e0',
-            fontFamily: 'var(--font-main)'
+            fontFamily: 'var(--font-main)',
+            overflowY: 'auto'
         }}>
             <motion.h1
                 initial={{ opacity: 0, y: 20 }}

@@ -24,5 +24,3 @@ export default function App() {
     </Switch>
   )
 }
-
-export default App

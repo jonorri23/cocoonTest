@@ -187,6 +187,78 @@ export default function Home() {
                         <p style={{ fontSize: '0.9rem', opacity: 0.6 }}>3D Sphere Viewer</p>
                     </motion.div>
                 </Link>
+
+                {/* Sandbox - New Experiments */}
+                <Link href="/sandbox">
+                    <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            padding: '2rem',
+                            border: '1px solid rgba(255, 255, 255, 0.6)',
+                            borderRadius: '16px',
+                            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            width: '200px',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            boxShadow: '0 0 20px rgba(255,255,255,0.1)'
+                        }}
+                    >
+                        <h2 style={{ marginBottom: '0.5rem', color: 'white' }}>Sandbox</h2>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.8 }}>Silk & Cocoon</p>
+                        <div style={{
+                            position: 'absolute',
+                            top: '0.5rem',
+                            right: '0.5rem',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '8px',
+                            fontSize: '0.7rem',
+                            color: 'white',
+                            fontWeight: '600'
+                        }}>
+                            NEW
+                        </div>
+                    </motion.div>
+                </Link>
+
+                {/* Gallery - Art Archive */}
+                <Link href="/gallery">
+                    <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            padding: '2rem',
+                            border: '1px solid rgba(212, 175, 55, 0.6)',
+                            borderRadius: '16px',
+                            background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(139, 69, 19, 0.05))',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            width: '200px',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            boxShadow: '0 0 20px rgba(212,175,55,0.1)'
+                        }}
+                    >
+                        <h2 style={{ marginBottom: '0.5rem', color: '#d4af37' }}>The Archive</h2>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.8 }}>Gallery</p>
+                        <div style={{
+                            position: 'absolute',
+                            top: '0.5rem',
+                            right: '0.5rem',
+                            background: 'rgba(212, 175, 55, 0.2)',
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '8px',
+                            fontSize: '0.7rem',
+                            color: '#d4af37',
+                            fontWeight: '600'
+                        }}>
+                            🖼️
+                        </div>
+                    </motion.div>
+                </Link>
             </div >
         </div >
     )

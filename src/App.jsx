@@ -7,6 +7,10 @@ import VersionOpusTest from './versions/VersionOpusTest';
 import VersionTestingIntro from './versions/VersionTestingIntro';
 import VersionShowcase from './versions/VersionShowcase';
 import VersionHouse from './versions/VersionHouse'
+import App1Silk from '../testapps/App1_Silk'
+import App2Cocoon from '../testapps/App2_Cocoon'
+import VersionSandbox from './versions/VersionSandbox'
+import VersionGallery from './versions/VersionGallery'
 import './index.css'
 
 export default function App() {
@@ -20,6 +24,10 @@ export default function App() {
       <Route path="/testing-intro" component={VersionTestingIntro} />
       <Route path="/showcase" component={VersionShowcase} />
       <Route path="/house" component={VersionHouse} />
+      <Route path="/silk" component={App1Silk} />
+      <Route path="/cocoon" component={App2Cocoon} />
+      <Route path="/sandbox" component={VersionSandbox} />
+      <Route path="/gallery" component={VersionGallery} />
 
       {/* Fallback */}
       <Route>404 Not Found</Route>

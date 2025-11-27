@@ -30,7 +30,7 @@ function Loader() {
 }
 
 // Sphere projection renderer
-function SphereProjection({ modelPath }) {
+function SphereProjection({ modelPath, scale = [1, 1, 1], position = [0, 0, 0], rotation = [0, 0, 0] }) {
     const { gl, scene, camera } = useThree()
     const meshRef = useRef()
     const { scene: modelScene } = useGLTF(modelPath)
@@ -52,8 +52,9 @@ function SphereProjection({ modelPath }) {
 
         // Clone the model
         const modelClone = modelScene.clone()
-        modelClone.scale.set(3, -3, 3)  // Negative Y to flip vertically
-        modelClone.position.set(0, -1, 0)
+        modelClone.scale.set(...scale)
+        modelClone.position.set(...position)
+        modelClone.rotation.set(...rotation)
         vScene.add(modelClone)
 
         // Add lights to virtual scene
@@ -97,7 +98,7 @@ function SphereProjection({ modelPath }) {
 }
 
 // Main 3D viewer component
-function SphereProjectionViewer({ modelPath }) {
+function SphereProjectionViewer({ modelPath, config }) {
     return (
         <>
             {/* Camera positioned at center of the sphere */}
@@ -121,7 +122,12 @@ function SphereProjectionViewer({ modelPath }) {
 
             {/* Sphere with projected model */}
             <Suspense fallback={<Loader />}>
-                <SphereProjection modelPath={modelPath} />
+                <SphereProjection
+                    modelPath={modelPath}
+                    scale={config.scale}
+                    position={config.position}
+                    rotation={config.rotation}
+                />
             </Suspense>
         </>
     )
@@ -134,7 +140,18 @@ export default function VersionHouse() {
         home: {
             path: '/one3dasset/Home.glb',
             name: 'Home',
-            icon: '🏠'
+            icon: '🏠',
+            scale: [3, -3, 3],
+            position: [0, -1, 0],
+            rotation: [0, 0, 0]
+        },
+        studio: {
+            path: '/anewscan.glb',
+            name: 'Studio Scan',
+            icon: '🎨',
+            scale: [1, -1, 1],
+            position: [0, 0, 0],
+            rotation: [0, 0, 0]
         }
     }
 
@@ -305,7 +322,10 @@ export default function VersionHouse() {
                     toneMappingExposure: 1.0
                 }}
             >
-                <SphereProjectionViewer modelPath={models[selectedModel].path} />
+                <SphereProjectionViewer
+                    modelPath={models[selectedModel].path}
+                    config={models[selectedModel]}
+                />
             </Canvas>
         </div>
     )
